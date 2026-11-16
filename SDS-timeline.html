@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spatial Development Strategy timeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap">
+<!-- Brand Typekit kit. If it is domain-locked to your WP domains it will not load on github.io and headings fall back to Open Sans. -->
+<link rel="stylesheet" href="https://use.typekit.net/lkt5fce.css">
+<style>
+  :root {
+    --park-green: #007D00;
+    --dark-green: #13301B;
+    --forest-green: #1D4F2B;
+    --light-green: #D9EDD9;
+    --almost-black: #1F1F1F;
+    --muted: #4A4A4A;
+    --border: #D8D2C4;
+    --card-width: 190px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background: transparent;
+  }
+
+  body {
+    font-family: "Open Sans", Arial, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    color: var(--almost-black);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .tl {
+    padding: 8px 16px;
+  }
+
+  .tl-hint {
+    display: none;
+    margin: 0 0 8px;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .tl.is-scrollable .tl-hint { display: block; }
+
+  /* Always landscape: scroll sideways when the space is narrower than the timeline */
+  .tl-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+  }
+
+  .tl-scroll:focus-visible {
+    outline: 3px solid #FFCF23;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 6px #1F1F1F;
+  }
+
+  .tl-track {
+    --above: 250px;
+    --below: 290px;
+    position: relative;
+    min-width: 1000px;
+    height: calc(var(--above) + var(--below));
+    margin: 0 16px;
+  }
+
+  .tl-track::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: var(--above);
+    height: 4px;
+    margin-top: -2px;
+    background: var(--forest-green);
+    border-radius: 2px;
+  }
+
+  .tl-ticks,
+  .tl-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .tl-tick {
+    position: absolute;
+    top: var(--above);
+    left: calc(var(--pos) * 1%);
+    transform: translateX(-50%);
+    padding-top: 12px;
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+
+  .tl-tick::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    width: 2px;
+    height: 12px;
+    margin-left: -1px;
+    background: var(--forest-green);
+  }
+
+  .tl-item {
+    position: absolute;
+    top: var(--above);
+    left: calc(var(--pos) * 1%);
+    width: 0;
+    height: 0;
+  }
+
+  .tl-dot {
+    position: absolute;
+    z-index: 2;
+    left: -10px;
+    top: -10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #fff;
+    border: 4px solid var(--park-green);
+  }
+
+  .tl-stem {
+    position: absolute;
+    left: -1px;
+    width: 2px;
+    height: 40px;
+    background: var(--park-green);
+  }
+
+  .is-above .tl-stem { bottom: 10px; }
+  .is-below .tl-stem { top: 10px; }
+
+  .tl-card {
+    position: absolute;
+    width: var(--card-width);
+    /* --shift is set by the script to keep cards near the ends inside the track */
+    transform: translateX(calc(-50% + var(--shift, 0px)));
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+
+  .is-above .tl-card { bottom: 50px; }
+  .is-below .tl-card { top: 50px; }
+
+  .tl-year {
+    display: block;
+    font-family: "AvenirPro85Heavy", "Open Sans", Arial, sans-serif;
+    font-weight: normal;
+    font-size: 0.875rem;
+    color: var(--park-green);
+  }
+
+  .tl-label {
+    margin: 2px 0 0;
+    font-family: "AvenirPro65Medium", "Open Sans", Arial, sans-serif;
+    font-weight: normal;
+    font-size: 1.0625rem;
+    line-height: 1.3;
+    color: var(--dark-green);
+  }
+
+  .tl-sub {
+    margin: 6px 0 0;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+
+  .tl-list {
+    margin: 4px 0 0;
+    padding-left: 1.1em;
+    list-style: disc;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+
+  .tl-list li + li { margin-top: 2px; }
+
+  /* Optional: card with an image. Add class tl-card--image and wrap the text in .tl-body */
+  .tl-card--image { padding: 0; overflow: hidden; }
+  .tl-card--image .tl-body { padding: 10px 14px 12px; }
+
+  .tl-card img {
+    display: block;
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+    background: var(--light-green);
+  }
+
+  /* Compact landscape for phones: shorter track, smaller cards */
+  @media (max-width: 720px) {
+    .tl { padding: 4px 8px; }
+    .tl-track {
+      --above: 170px;
+      --below: 220px;
+      min-width: 800px;
+      margin: 0 12px;
+    }
+    .tl-card { width: 150px; padding: 8px 10px; }
+    .tl-stem { height: 24px; }
+    .is-above .tl-card { bottom: 34px; }
+    .is-below .tl-card { top: 34px; }
+    .tl-year { font-size: 0.75rem; }
+    .tl-label { font-size: 0.875rem; }
+    .tl-sub,
+    .tl-list { font-size: 0.75rem; margin-top: 4px; }
+    .tl-card img { height: 64px; }
+    .tl-card--image { padding: 0; }
+    .tl-card--image .tl-body { padding: 6px 10px 8px; }
+    .tl-tick { font-size: 0.6875rem; padding-top: 10px; }
+  }
+</style>
+</head>
+<body>
+<section class="tl" aria-labelledby="tl-title">
+  <h2 id="tl-title" class="visually-hidden">Spatial Development Strategy timeline, 2025 to 2029</h2>
+
+  <p class="tl-hint" id="tl-hint">Scroll sideways to see the full timeline.</p>
+  <div class="tl-scroll" tabindex="0" role="region" aria-labelledby="tl-title" aria-describedby="tl-hint">
+  <div class="tl-track">
+    <!-- Axis year markers: decorative, hidden from screen readers -->
+    <ul class="tl-ticks" aria-hidden="true">
+      <li class="tl-tick" style="--pos: 0">2025</li>
+      <li class="tl-tick" style="--pos: 20">2026</li>
+      <li class="tl-tick" style="--pos: 40">2027</li>
+      <li class="tl-tick" style="--pos: 60">2028</li>
+      <li class="tl-tick" style="--pos: 80">2029</li>
+      <li class="tl-tick" style="--pos: 100">2030</li>
+    </ul>
+
+    <!--
+      Axis runs from 1 January 2025 (0) to 1 January 2030 (100), so one year = 20.
+      --pos = (year - 2025 + season) * 20
+      Seasons: summer = 0.5, autumn = 0.8, winter = 0.9 (late in that calendar year)
+      Cards on the same side need at least 20 apart, or they overlap.
+    -->
+    <ol class="tl-items">
+
+      <li class="tl-item is-below" style="--pos: 10">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <span class="tl-stem" aria-hidden="true"></span>
+        <div class="tl-card">
+          <span class="tl-year">Stage 1 - from summer 2025</span>
+          <h3 class="tl-label">SDS initiation and scoping</h3>
+          <p class="tl-sub">Including:</p>
+          <ul class="tl-list">
+            <li>commissioning evidence base</li>
+            <li>establishing working groups and wider governance</li>
+            <li>initial stakeholder engagement</li>
+          </ul>
+        </div>
+      </li>
+
+      <li class="tl-item is-above" style="--pos: 38">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <span class="tl-stem" aria-hidden="true"></span>
+        <div class="tl-card">
+          <span class="tl-year">Stage 2 - winter 2026</span>
+          <h3 class="tl-label">Initial public engagement</h3>
+          <p class="tl-sub">On a vision for the SDS and 'call for big ideas'</p>
+        </div>
+      </li>
+
+      <li class="tl-item is-below" style="--pos: 56">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <span class="tl-stem" aria-hidden="true"></span>
+        <div class="tl-card">
+          <span class="tl-year">Stage 3 - autumn 2027</span>
+          <h3 class="tl-label">Public consultation</h3>
+          <p class="tl-sub">On growth options for the SDS</p>
+        </div>
+      </li>
+
+      <li class="tl-item is-above" style="--pos: 70">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <span class="tl-stem" aria-hidden="true"></span>
+        <div class="tl-card">
+          <span class="tl-year">Stage 4 - summer 2028</span>
+          <h3 class="tl-label">Publication of draft SDS and public consultation</h3>
+        </div>
+      </li>
+
+      <li class="tl-item is-below" style="--pos: 78">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <span class="tl-stem" aria-hidden="true"></span>
+        <div class="tl-card">
+          <span class="tl-year">Stage 5 - winter 2028</span>
+          <h3 class="tl-label">Submission to the Planning Inspectorate</h3>
+          <p class="tl-sub">For an Examination in Public</p>
+        </div>
+      </li>
+
+      <li class="tl-item is-above" style="--pos: 90">
+        <span class="tl-dot" aria-hidden="true"></span>
+        <span class="tl-stem" aria-hidden="true"></span>
+        <div class="tl-card">
+          <span class="tl-year">Stage 6 - summer 2029</span>
+          <h3 class="tl-label">Adoption, monitoring and review</h3>
+        </div>
+      </li>
+
+    </ol>
+  </div>
+  </div>
+</section>
+
+<script>
+  // Lays out the timeline to fit its content:
+  // - keeps cards near either end inside the track
+  // - sizes the space above and below the line to the tallest card on each side
+  // - shows the scroll hint only when the timeline is wider than the space
+  (function () {
+    var tl = document.querySelector(".tl");
+    var scroller = document.querySelector(".tl-scroll");
+    var track = document.querySelector(".tl-track");
+    var GAP = 12;
+    var EDGE = 4;
+
+    function clampCards() {
+      var trackWidth = track.offsetWidth;
+      track.querySelectorAll(".tl-item").forEach(function (item) {
+        var card = item.querySelector(".tl-card");
+        var x = item.offsetLeft;
+        var half = card.offsetWidth / 2;
+        var shift = 0;
+        if (x - half < -EDGE) shift = half - x - EDGE;
+        if (x + half > trackWidth + EDGE) shift = trackWidth + EDGE - x - half;
+        card.style.setProperty("--shift", shift + "px");
+      });
+    }
+
+    function tallest(side) {
+      var max = 0;
+      track.querySelectorAll(".is-" + side + " .tl-card").forEach(function (card) {
+        var offset = parseFloat(getComputedStyle(card)[side === "above" ? "bottom" : "top"]) || 0;
+        max = Math.max(max, card.offsetHeight + offset);
+      });
+      return max;
+    }
+
+    function fit() {
+      clampCards();
+      track.style.setProperty("--above", (tallest("above") + GAP) + "px");
+      track.style.setProperty("--below", (Math.max(tallest("below"), 30) + GAP) + "px");
+      tl.classList.toggle("is-scrollable", scroller.scrollWidth > scroller.clientWidth + 1);
+    }
+
+    fit();
+    window.addEventListener("load", fit);
+    window.addEventListener("resize", fit);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  })();
+
+  // Only needed for the iframe embed: tells the parent page how tall the timeline is.
+  // Measures the timeline itself, not the document, so the iframe can shrink as well as grow.
+  (function () {
+    if (window.parent === window) return;
+    var tl = document.querySelector(".tl");
+    function sendHeight() {
+      window.parent.postMessage(
+        { type: "mca-timeline-height", height: Math.ceil(tl.getBoundingClientRect().height) },
+        "*"
+      );
+    }
+    window.addEventListener("load", sendHeight);
+    if ("ResizeObserver" in window) {
+      new ResizeObserver(sendHeight).observe(tl);
+    } else {
+      window.addEventListener("resize", sendHeight);
+    }
+  })();
+</script>
+</body>
+</html>
