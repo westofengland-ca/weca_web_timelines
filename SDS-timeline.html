@@ -199,6 +199,64 @@
 
   .tl-list li + li { margin-top: 2px; }
 
+  /* Expandable extra detail. The panel opens over the space below the card,
+     so opening it never changes the height of the timeline or the iframe. */
+  .tl-card:has(.tl-more[open]) { z-index: 5; }
+
+  .tl-more { margin-top: 6px; }
+
+  .tl-more summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: #086CA6;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    list-style: none;
+  }
+
+  .tl-more summary::-webkit-details-marker { display: none; }
+
+  .tl-more summary::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 5px solid currentColor;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    transition: transform 0.15s;
+  }
+
+  .tl-more[open] summary::before { transform: rotate(90deg); }
+
+  .tl-more summary:hover { text-decoration-thickness: 2px; }
+
+  .tl-more summary:focus-visible {
+    outline: none;
+    background: #FFCF23;
+    color: #1F1F1F;
+    box-shadow: 0 3px 0 #1F1F1F;
+    text-decoration: none;
+  }
+
+  .tl-more .tl-list {
+    position: absolute;
+    left: -1px;
+    right: -1px;
+    top: calc(100% - 6px);
+    margin: 0;
+    padding: 4px 14px 12px 32px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-top: 0;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 6px 12px rgba(31, 31, 31, 0.12);
+  }
+
+  .tl-card:has(.tl-more[open]) { border-radius: 8px 8px 0 0; }
+
   /* Optional: card with an image. Add class tl-card--image and wrap the text in .tl-body */
   .tl-card--image { padding: 0; overflow: hidden; }
   .tl-card--image .tl-body { padding: 10px 14px 12px; }
@@ -228,6 +286,8 @@
     .tl-label { font-size: 0.875rem; }
     .tl-sub,
     .tl-list { font-size: 0.75rem; margin-top: 4px; }
+    .tl-more summary { font-size: 0.75rem; }
+    .tl-more .tl-list { margin: 0; padding: 4px 10px 10px 26px; }
     .tl-card img { height: 64px; }
     .tl-card--image { padding: 0; }
     .tl-card--image .tl-body { padding: 6px 10px 8px; }
@@ -257,25 +317,29 @@
       --pos = (year - 2025 + season) * 20
       Seasons: summer = 0.5, autumn = 0.8, winter = 0.9 (late in that calendar year)
       Cards on the same side need at least 20 apart, or they overlap.
+      A card with an expandable list (.tl-more) should sit above the line, with no
+      card close to it below the line, because the list opens downwards over that space.
     -->
     <ol class="tl-items">
 
-      <li class="tl-item is-below" style="--pos: 10">
+      <li class="tl-item is-above" style="--pos: 10">
         <span class="tl-dot" aria-hidden="true"></span>
         <span class="tl-stem" aria-hidden="true"></span>
         <div class="tl-card">
           <span class="tl-year">Stage 1 - from summer 2025</span>
           <h3 class="tl-label">SDS initiation and scoping</h3>
-          <p class="tl-sub">Including:</p>
-          <ul class="tl-list">
-            <li>commissioning evidence base</li>
-            <li>establishing working groups and wider governance</li>
-            <li>initial stakeholder engagement</li>
-          </ul>
+          <details class="tl-more">
+            <summary>What this includes</summary>
+            <ul class="tl-list">
+              <li>commissioning evidence base</li>
+              <li>establishing working groups and wider governance</li>
+              <li>initial stakeholder engagement</li>
+            </ul>
+          </details>
         </div>
       </li>
 
-      <li class="tl-item is-above" style="--pos: 38">
+      <li class="tl-item is-below" style="--pos: 38">
         <span class="tl-dot" aria-hidden="true"></span>
         <span class="tl-stem" aria-hidden="true"></span>
         <div class="tl-card">
@@ -285,7 +349,7 @@
         </div>
       </li>
 
-      <li class="tl-item is-below" style="--pos: 56">
+      <li class="tl-item is-above" style="--pos: 56">
         <span class="tl-dot" aria-hidden="true"></span>
         <span class="tl-stem" aria-hidden="true"></span>
         <div class="tl-card">
@@ -295,7 +359,7 @@
         </div>
       </li>
 
-      <li class="tl-item is-above" style="--pos: 70">
+      <li class="tl-item is-below" style="--pos: 70">
         <span class="tl-dot" aria-hidden="true"></span>
         <span class="tl-stem" aria-hidden="true"></span>
         <div class="tl-card">
@@ -304,7 +368,7 @@
         </div>
       </li>
 
-      <li class="tl-item is-below" style="--pos: 78">
+      <li class="tl-item is-above" style="--pos: 78">
         <span class="tl-dot" aria-hidden="true"></span>
         <span class="tl-stem" aria-hidden="true"></span>
         <div class="tl-card">
@@ -314,7 +378,7 @@
         </div>
       </li>
 
-      <li class="tl-item is-above" style="--pos: 90">
+      <li class="tl-item is-below" style="--pos: 90">
         <span class="tl-dot" aria-hidden="true"></span>
         <span class="tl-stem" aria-hidden="true"></span>
         <div class="tl-card">
@@ -362,12 +426,34 @@
       return max;
     }
 
+    // Space an expandable panel needs below the line when it opens from a card above it
+    function panelReach() {
+      var max = 0;
+      track.querySelectorAll(".is-above .tl-more").forEach(function (d) {
+        var wasOpen = d.open;
+        d.open = true;
+        var line = track.getBoundingClientRect().top + parseFloat(getComputedStyle(track).getPropertyValue("--above"));
+        var bottom = d.querySelector(".tl-list").getBoundingClientRect().bottom;
+        max = Math.max(max, bottom - line);
+        d.open = wasOpen;
+      });
+      return max;
+    }
+
     function fit() {
       clampCards();
       track.style.setProperty("--above", (tallest("above") + GAP) + "px");
-      track.style.setProperty("--below", (Math.max(tallest("below"), 30) + GAP) + "px");
+      track.style.setProperty("--below", (Math.max(tallest("below"), panelReach(), 30) + GAP) + "px");
       tl.classList.toggle("is-scrollable", scroller.scrollWidth > scroller.clientWidth + 1);
     }
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "Escape") return;
+      track.querySelectorAll(".tl-more[open]").forEach(function (d) {
+        d.open = false;
+        d.querySelector("summary").focus();
+      });
+    });
 
     fit();
     window.addEventListener("load", fit);
