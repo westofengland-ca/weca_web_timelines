@@ -55,71 +55,7 @@
 
   .tl { padding: 8px 16px; }
 
-  .tl-heading {
-    margin: 0 0 4px;
-    font-family: "AvenirPro65Medium", "Open Sans", Arial, sans-serif;
-    font-weight: normal;
-    font-size: 1.125rem;
-    color: var(--dark-green);
-  }
-
-  /* Key */
-  .tl-key {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin: 0 0 16px;
-    padding: 0;
-    list-style: none;
-  }
-
-  .tl-key-btn {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    column-gap: 10px;
-    width: 100%;
-    height: 100%;
-    padding: 10px 12px;
-    text-align: left;
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    cursor: pointer;
-  }
-
-  .tl-key-btn:hover { border-color: var(--park-green); }
-
-  .tl-key-btn[aria-pressed="true"] {
-    border: 2px solid var(--park-green);
-    padding: 9px 11px;
-    background: var(--cream-light);
-  }
-
-  .tl-key-btn .tl-swatch { margin-top: 4px; }
-
-  .tl-key-name {
-    font-family: "AvenirPro85Heavy", "Open Sans", Arial, sans-serif;
-    font-size: 1rem;
-    color: var(--dark-green);
-  }
-
-  .tl-key-def {
-    grid-column: 2;
-    font-size: 0.875rem;
-    line-height: 1.45;
-    color: var(--muted);
-  }
-
-  .tl-key-action {
-    grid-column: 2;
-    margin-top: 4px;
-    font-size: 0.8125rem;
-    color: var(--link);
-    text-decoration: underline;
-    text-underline-offset: 2px;
-  }
-
-  /* Swatches double as the dots on the line: filled = statutory, hollow = non-statutory */
+  /* Dots on the line: filled = statutory, hollow = non-statutory, grey = ongoing */
   .tl-swatch {
     display: inline-block;
     width: 18px;
@@ -178,7 +114,6 @@
     left: calc(var(--pos) * 1%);
     width: 0;
     height: 0;
-    transition: opacity 0.15s;
   }
 
   .tl-dot {
@@ -259,9 +194,6 @@
   .tl-badge--non-statutory { background: var(--light-green); color: var(--dark-green); }
   .tl-badge--none { background: #EEEEEE; color: var(--muted); }
 
-  /* Dims stages that do not match the key item that is switched on */
-  .tl.is-filtered .tl-item:not(.is-match) { opacity: 0.4; }
-
   /* Stage details */
   .tl-panels {
     margin: 8px 0 0;
@@ -311,11 +243,21 @@
 
   .tl-panel-cols ul { padding-left: 1.2em; }
 
+  .tl-legend {
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+
+  .tl-legend li + li { margin-top: 8px; }
+
+  .tl-legend .tl-badge { margin: 0 6px 0 0; }
+
   /* Phones */
   @media (max-width: 720px) {
     .tl { padding: 4px 8px; }
-    .tl-key { grid-template-columns: 1fr; gap: 8px; margin-bottom: 12px; }
-    .tl-key-def { font-size: 0.8125rem; }
     .tl-track { --card-width: 140px; min-width: 700px; margin: 0 12px; }
     .tl-card { padding: 8px 10px; }
     .tl-card[aria-selected="true"] { padding: 7px 9px; }
@@ -327,33 +269,14 @@
     .tl-panel p { font-size: 0.9375rem; }
     .tl-panel-cols { grid-template-columns: 1fr; gap: 10px; }
     .tl-panel-cols p,
-    .tl-panel-cols ul { font-size: 0.875rem; }
+    .tl-panel-cols ul,
+    .tl-legend { font-size: 0.875rem; }
   }
 </style>
 </head>
 <body>
 <section class="tl" aria-labelledby="tl-title">
   <h2 id="tl-title" class="visually-hidden">Spatial Development Strategy timeline</h2>
-
-  <h3 class="tl-heading" id="tl-key-title">What do statutory and non-statutory mean?</h3>
-  <ul class="tl-key" aria-labelledby="tl-key-title">
-    <li>
-      <button type="button" class="tl-key-btn" data-type="statutory" aria-pressed="false">
-        <span class="tl-swatch tl-swatch--statutory" aria-hidden="true"></span>
-        <span class="tl-key-name">Statutory stages</span>
-        <span class="tl-key-def">Set out in legislation and regulations. The Mayoral Combined Authority must complete them.</span>
-        <span class="tl-key-action" aria-hidden="true">Show these stages</span>
-      </button>
-    </li>
-    <li>
-      <button type="button" class="tl-key-btn" data-type="non-statutory" aria-pressed="false">
-        <span class="tl-swatch" aria-hidden="true"></span>
-        <span class="tl-key-name">Non-statutory stages</span>
-        <span class="tl-key-def">Not legally required. We do them to improve the quality of the strategy and give people more opportunities to get involved.</span>
-        <span class="tl-key-action" aria-hidden="true">Show these stages</span>
-      </button>
-    </li>
-  </ul>
 
   <p class="tl-hint" id="tl-hint">Scroll sideways to see the full timeline.</p>
   <div class="tl-scroll" role="region" aria-label="Stages" aria-describedby="tl-hint">
@@ -370,7 +293,7 @@
       <li class="tl-item is-above" style="--pos: 7.14" data-type="non-statutory" role="presentation">
         <span class="tl-dot tl-swatch" aria-hidden="true"></span>
         <span class="tl-stem" aria-hidden="true"></span>
-        <button type="button" class="tl-card" role="tab" id="tl-tab-1" aria-controls="tl-panel-1" aria-selected="true">
+        <button type="button" class="tl-card" role="tab" id="tl-tab-1" aria-controls="tl-panel-1" aria-selected="false">
           <span class="tl-when">Summer 2025 onwards</span>
           <span class="tl-title">Getting started</span>
           <span class="tl-badge tl-badge--non-statutory">Non-statutory</span>
@@ -443,6 +366,17 @@
 
   <!-- Stage details. Without JavaScript all of them show, one after another. -->
   <div class="tl-panels">
+
+    <!-- Shown when no stage is selected. Hidden without JavaScript, when all stages show instead. -->
+    <div class="tl-panel tl-panel--intro" id="tl-panel-intro" hidden>
+      <h3>Select a stage to find out more</h3>
+      <p>Each stage shows what we are doing, how you can get involved and how it meets government requirements.</p>
+      <ul class="tl-legend">
+        <li><span><span class="tl-badge tl-badge--statutory">Statutory</span> required by legislation and regulations</span></li>
+        <li><span><span class="tl-badge tl-badge--non-statutory">Non-statutory</span> not legally required, but gives people more opportunities to get involved</span></li>
+        <li><span><span class="tl-badge tl-badge--none">Ongoing</span> continues after the SDS is adopted</span></li>
+      </ul>
+    </div>
 
     <div class="tl-panel" role="tabpanel" id="tl-panel-1" aria-labelledby="tl-tab-1" tabindex="0">
       <span class="tl-when">Summer 2025 onwards</span>
@@ -556,58 +490,43 @@
     var panelsBox = document.querySelector(".tl-panels");
     var tabs = Array.prototype.slice.call(document.querySelectorAll(".tl-card[role=tab]"));
     var panels = Array.prototype.slice.call(document.querySelectorAll(".tl-panel"));
-    var keyBtns = Array.prototype.slice.call(document.querySelectorAll(".tl-key-btn"));
     var GAP = 8;
     var EDGE = 4;
 
     document.documentElement.classList.add("js");
 
     // Tabs: one stage's details at a time
+    var intro = document.getElementById("tl-panel-intro");
+
+    // tab = null shows the intro panel with no stage selected
     function select(tab, focus) {
       tabs.forEach(function (t) {
         var on = t === tab;
         t.setAttribute("aria-selected", on ? "true" : "false");
-        t.tabIndex = on ? 0 : -1;
+        // With nothing selected, the first stage is the one reached with the Tab key
+        t.tabIndex = on || (!tab && t === tabs[0]) ? 0 : -1;
         document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
       });
-      if (focus) {
+      intro.hidden = !!tab;
+      if (tab && focus) {
         tab.focus();
         tab.scrollIntoView({ block: "nearest", inline: "nearest" });
       }
     }
 
     tabs.forEach(function (tab, i) {
-      tab.addEventListener("click", function () { select(tab, false); });
+      // Clicking the selected stage again goes back to the intro
+      tab.addEventListener("click", function () {
+        select(tab.getAttribute("aria-selected") === "true" ? null : tab, false);
+      });
       tab.addEventListener("keydown", function (e) {
         var next = null;
         if (e.key === "ArrowRight" || e.key === "ArrowDown") next = tabs[(i + 1) % tabs.length];
         if (e.key === "ArrowLeft" || e.key === "ArrowUp") next = tabs[(i - 1 + tabs.length) % tabs.length];
         if (e.key === "Home") next = tabs[0];
         if (e.key === "End") next = tabs[tabs.length - 1];
+        if (e.key === "Escape") { e.preventDefault(); select(null, false); tab.focus(); return; }
         if (next) { e.preventDefault(); select(next, true); }
-      });
-    });
-
-    // Key: highlights the matching stages and opens the first of them
-    keyBtns.forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var type = btn.getAttribute("data-type");
-        var turnOn = btn.getAttribute("aria-pressed") !== "true";
-        keyBtns.forEach(function (b) {
-          b.setAttribute("aria-pressed", b === btn && turnOn ? "true" : "false");
-          b.querySelector(".tl-key-action").textContent = b === btn && turnOn ? "Show all stages" : "Show these stages";
-        });
-        tl.classList.toggle("is-filtered", turnOn);
-        var first = null;
-        document.querySelectorAll(".tl-item").forEach(function (item) {
-          var match = item.getAttribute("data-type") === type;
-          item.classList.toggle("is-match", turnOn && match);
-          if (turnOn && match && !first) first = item.querySelector(".tl-card");
-        });
-        if (first) {
-          select(first, false);
-          first.scrollIntoView({ block: "nearest", inline: "nearest" });
-        }
       });
     });
 
@@ -655,7 +574,7 @@
       reservePanelHeight();
     }
 
-    select(tabs[0], false);
+    select(null, false);
     fit();
     window.addEventListener("load", fit);
     window.addEventListener("resize", fit);
