@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spatial Development Strategy timeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap">
+<!-- Brand Typekit kit. If it is domain-locked to the WordPress domains it will not load on github.io and headings fall back to Open Sans. -->
+<link rel="stylesheet" href="https://use.typekit.net/lkt5fce.css">
+<style>
+  :root {
+    --park-green: #007D00;
+    --dark-green: #13301B;
+    --forest-green: #1D4F2B;
+    --light-green: #D9EDD9;
+    --cream-light: #F9F7F4;
+    --almost-black: #1F1F1F;
+    --muted: #4A4A4A;
+    --grey: #767676;
+    --border: #D8D2C4;
+    --link: #086CA6;
+    --focus: #FFCF23;
+    --card-width: 170px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html, body { margin: 0; background: transparent; }
+
+  body {
+    font-family: "Open Sans", Arial, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    color: var(--almost-black);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  button { font: inherit; color: inherit; }
+
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 6px var(--almost-black);
+  }
+
+  .tl { padding: 8px 16px; }
+
+  .tl-heading {
+    margin: 0 0 4px;
+    font-family: "AvenirPro65Medium", "Open Sans", Arial, sans-serif;
+    font-weight: normal;
+    font-size: 1.125rem;
+    color: var(--dark-green);
+  }
+
+  /* Key */
+  .tl-key {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 0 0 16px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tl-key-btn {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 10px;
+    width: 100%;
+    height: 100%;
+    padding: 10px 12px;
+    text-align: left;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .tl-key-btn:hover { border-color: var(--park-green); }
+
+  .tl-key-btn[aria-pressed="true"] {
+    border: 2px solid var(--park-green);
+    padding: 9px 11px;
+    background: var(--cream-light);
+  }
+
+  .tl-key-btn .tl-swatch { margin-top: 4px; }
+
+  .tl-key-name {
+    font-family: "AvenirPro85Heavy", "Open Sans", Arial, sans-serif;
+    font-size: 1rem;
+    color: var(--dark-green);
+  }
+
+  .tl-key-def {
+    grid-column: 2;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: var(--muted);
+  }
+
+  .tl-key-action {
+    grid-column: 2;
+    margin-top: 4px;
+    font-size: 0.8125rem;
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* Swatches double as the dots on the line: filled = statutory, hollow = non-statutory */
+  .tl-swatch {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 4px solid var(--park-green);
+    background: #fff;
+    flex: none;
+  }
+
+  .tl-swatch--statutory { background: var(--park-green); }
+  .tl-swatch--none { border-color: var(--grey); }
+
+  .tl-hint {
+    display: none;
+    margin: 0 0 6px;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .tl.is-scrollable .tl-hint { display: block; }
+
+  /* Timeline track */
+  .tl-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 4px 0 8px;
+  }
+
+  .tl-track {
+    --above: 130px;
+    --below: 130px;
+    position: relative;
+    min-width: 900px;
+    height: calc(var(--above) + var(--below));
+    margin: 0 16px;
+  }
+
+  .tl-track::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: var(--above);
+    height: 4px;
+    margin-top: -2px;
+    background: var(--forest-green);
+    border-radius: 2px;
+  }
+
+  .tl-items { list-style: none; margin: 0; padding: 0; }
+
+  .tl-item {
+    position: absolute;
+    top: var(--above);
+    left: calc(var(--pos) * 1%);
+    width: 0;
+    height: 0;
+    transition: opacity 0.15s;
+  }
+
+  .tl-dot {
+    position: absolute;
+    z-index: 2;
+    left: -10px;
+    top: -10px;
+    width: 20px;
+    height: 20px;
+  }
+
+  .tl-stem {
+    position: absolute;
+    left: -1px;
+    width: 2px;
+    height: 30px;
+    background: var(--park-green);
+  }
+
+  .is-above .tl-stem { bottom: 10px; }
+  .is-below .tl-stem { top: 10px; }
+
+  .tl-card {
+    position: absolute;
+    width: var(--card-width);
+    transform: translateX(calc(-50% + var(--shift, 0px)));
+    display: block;
+    padding: 10px 12px;
+    text-align: left;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .is-above .tl-card { bottom: 40px; }
+  .is-below .tl-card { top: 40px; }
+
+  .tl-card:hover { border-color: var(--park-green); }
+
+  .tl-card[aria-selected="true"] {
+    border: 2px solid var(--park-green);
+    padding: 9px 11px;
+    background: var(--cream-light);
+  }
+
+  .tl-card[aria-selected="true"] .tl-title { text-decoration: none; }
+
+  .tl-when {
+    display: block;
+    font-family: "AvenirPro85Heavy", "Open Sans", Arial, sans-serif;
+    font-size: 0.8125rem;
+    color: var(--park-green);
+  }
+
+  .tl-title {
+    display: block;
+    margin-top: 2px;
+    font-family: "AvenirPro65Medium", "Open Sans", Arial, sans-serif;
+    font-size: 1rem;
+    line-height: 1.3;
+    color: var(--dark-green);
+    text-decoration: underline;
+    text-decoration-color: var(--border);
+    text-underline-offset: 3px;
+  }
+
+  .tl-badge {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 1px 8px;
+    border-radius: 3.75rem;
+    font-size: 0.75rem;
+    line-height: 1.6;
+  }
+
+  .tl-badge--statutory { background: var(--dark-green); color: #fff; }
+  .tl-badge--non-statutory { background: var(--light-green); color: var(--dark-green); }
+  .tl-badge--none { background: #EEEEEE; color: var(--muted); }
+
+  /* Dims stages that do not match the key item that is switched on */
+  .tl.is-filtered .tl-item:not(.is-match) { opacity: 0.4; }
+
+  /* Stage details */
+  .tl-panels {
+    margin: 8px 0 0;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .tl-panel { padding: 14px 16px 16px; }
+
+  .tl-panel + .tl-panel { border-top: 1px solid var(--border); }
+
+  .js .tl-panel + .tl-panel { border-top: 0; }
+
+  .tl-panel h3 {
+    margin: 0;
+    font-family: "AvenirPro65Medium", "Open Sans", Arial, sans-serif;
+    font-weight: normal;
+    font-size: 1.3125rem;
+    line-height: 1.3;
+    color: var(--dark-green);
+  }
+
+  .tl-panel .tl-when { margin-bottom: 2px; }
+
+  .tl-panel .tl-badge { margin: 6px 0 0; }
+
+  .tl-panel p { margin: 8px 0 0; font-size: 1rem; }
+
+  .tl-panel-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 12px;
+  }
+
+  .tl-panel h4 {
+    margin: 0;
+    font-family: "AvenirPro85Heavy", "Open Sans", Arial, sans-serif;
+    font-weight: normal;
+    font-size: 0.9375rem;
+    color: var(--dark-green);
+  }
+
+  .tl-panel-cols p,
+  .tl-panel-cols ul { margin: 4px 0 0; font-size: 0.9375rem; color: var(--muted); }
+
+  .tl-panel-cols ul { padding-left: 1.2em; }
+
+  /* Phones */
+  @media (max-width: 720px) {
+    .tl { padding: 4px 8px; }
+    .tl-key { grid-template-columns: 1fr; gap: 8px; margin-bottom: 12px; }
+    .tl-key-def { font-size: 0.8125rem; }
+    .tl-track { --card-width: 140px; min-width: 700px; margin: 0 12px; }
+    .tl-card { padding: 8px 10px; }
+    .tl-card[aria-selected="true"] { padding: 7px 9px; }
+    .tl-when { font-size: 0.75rem; }
+    .tl-title { font-size: 0.875rem; }
+    .tl-badge { font-size: 0.6875rem; }
+    .tl-panel { padding: 12px; }
+    .tl-panel h3 { font-size: 1.125rem; }
+    .tl-panel p { font-size: 0.9375rem; }
+    .tl-panel-cols { grid-template-columns: 1fr; gap: 10px; }
+    .tl-panel-cols p,
+    .tl-panel-cols ul { font-size: 0.875rem; }
+  }
+</style>
+</head>
+<body>
+<section class="tl" aria-labelledby="tl-title">
+  <h2 id="tl-title" class="visually-hidden">Spatial Development Strategy timeline</h2>
+
+  <h3 class="tl-heading" id="tl-key-title">What do statutory and non-statutory mean?</h3>
+  <ul class="tl-key" aria-labelledby="tl-key-title">
+    <li>
+      <button type="button" class="tl-key-btn" data-type="statutory" aria-pressed="false">
+        <span class="tl-swatch tl-swatch--statutory" aria-hidden="true"></span>
+        <span class="tl-key-name">Statutory stages</span>
+        <span class="tl-key-def">Set out in legislation and regulations. The Mayoral Combined Authority must complete them.</span>
+        <span class="tl-key-action" aria-hidden="true">Show these stages</span>
+      </button>
+    </li>
+    <li>
+      <button type="button" class="tl-key-btn" data-type="non-statutory" aria-pressed="false">
+        <span class="tl-swatch" aria-hidden="true"></span>
+        <span class="tl-key-name">Non-statutory stages</span>
+        <span class="tl-key-def">Not legally required. We do them to improve the quality of the strategy and give people more opportunities to get involved.</span>
+        <span class="tl-key-action" aria-hidden="true">Show these stages</span>
+      </button>
+    </li>
+  </ul>
+
+  <p class="tl-hint" id="tl-hint">Scroll sideways to see the full timeline.</p>
+  <div class="tl-scroll" role="region" aria-label="Stages" aria-describedby="tl-hint">
+  <div class="tl-track">
+    <!--
+      Stages are evenly spaced, not to scale: there are too many close together in 2028 and 2029
+      to place them by date without overlapping.
+      --pos for n stages: (2i - 1) / (2n) x 100, where i is the stage number.
+      Alternate is-above and is-below.
+      data-type: statutory, non-statutory, or none.
+    -->
+    <ol class="tl-items" role="tablist" aria-label="Stages of the Spatial Development Strategy">
+
+      <li class="tl-item is-above" style="--pos: 7.14" data-type="non-statutory" role="presentation">
+        <span class="tl-dot tl-swatch" aria-hidden="true"></span>
+        <span class="tl-stem" aria-hidden="true"></span>
+        <button type="button" class="tl-card" role="tab" id="tl-tab-1" aria-controls="tl-panel-1" aria-selected="true">
+          <span class="tl-when">Summer 2025 onwards</span>
+          <span class="tl-title">Getting started</span>
+          <span class="tl-badge tl-badge--non-statutory">Non-statutory</span>
+        </button>
+      </li>
+
+      <li class="tl-item is-below" style="--pos: 21.43" data-type="statutory" role="presentation">
+        <span class="tl-dot tl-swatch tl-swatch--statutory" aria-hidden="true"></span>
+        <span class="tl-stem" aria-hidden="true"></span>
+        <button type="button" class="tl-card" role="tab" id="tl-tab-2" aria-controls="tl-panel-2" aria-selected="false">
+          <span class="tl-when">Winter 2026</span>
+          <span class="tl-title">Listening to the region</span>
+          <span class="tl-badge tl-badge--statutory">Statutory</span>
+        </button>
+      </li>
+
+      <li class="tl-item is-above" style="--pos: 35.71" data-type="non-statutory" role="presentation">
+        <span class="tl-dot tl-swatch" aria-hidden="true"></span>
+        <span class="tl-stem" aria-hidden="true"></span>
+        <button type="button" class="tl-card" role="tab" id="tl-tab-3" aria-controls="tl-panel-3" aria-selected="false">
+          <span class="tl-when">Autumn 2027</span>
+          <span class="tl-title">Exploring options for growth</span>
+          <span class="tl-badge tl-badge--non-statutory">Non-statutory</span>
+        </button>
+      </li>
+
+      <li class="tl-item is-below" style="--pos: 50" data-type="statutory" role="presentation">
+        <span class="tl-dot tl-swatch tl-swatch--statutory" aria-hidden="true"></span>
+        <span class="tl-stem" aria-hidden="true"></span>
+        <button type="button" class="tl-card" role="tab" id="tl-tab-4" aria-controls="tl-panel-4" aria-selected="false">
+          <span class="tl-when">Summer 2028</span>
+          <span class="tl-title">Drafting the strategy</span>
+          <span class="tl-badge tl-badge--statutory">Statutory</span>
+        </button>
+      </li>
+
+      <li class="tl-item is-above" style="--pos: 64.29" data-type="statutory" role="presentation">
+        <span class="tl-dot tl-swatch tl-swatch--statutory" aria-hidden="true"></span>
+        <span class="tl-stem" aria-hidden="true"></span>
+        <button type="button" class="tl-card" role="tab" id="tl-tab-5" aria-controls="tl-panel-5" aria-selected="false">
+          <span class="tl-when">Winter 2028</span>
+          <span class="tl-title">Independent examination</span>
+          <span class="tl-badge tl-badge--statutory">Statutory</span>
+        </button>
+      </li>
+
+      <li class="tl-item is-below" style="--pos: 78.57" data-type="statutory" role="presentation">
+        <span class="tl-dot tl-swatch tl-swatch--statutory" aria-hidden="true"></span>
+        <span class="tl-stem" aria-hidden="true"></span>
+        <button type="button" class="tl-card" role="tab" id="tl-tab-6" aria-controls="tl-panel-6" aria-selected="false">
+          <span class="tl-when">Summer 2029</span>
+          <span class="tl-title">Finalising the SDS</span>
+          <span class="tl-badge tl-badge--statutory">Statutory</span>
+        </button>
+      </li>
+
+      <li class="tl-item is-above" style="--pos: 92.86" data-type="none" role="presentation">
+        <span class="tl-dot tl-swatch tl-swatch--none" aria-hidden="true"></span>
+        <span class="tl-stem" aria-hidden="true"></span>
+        <button type="button" class="tl-card" role="tab" id="tl-tab-7" aria-controls="tl-panel-7" aria-selected="false">
+          <span class="tl-when">From summer 2029</span>
+          <span class="tl-title">Delivery and review</span>
+          <span class="tl-badge tl-badge--none">Ongoing</span>
+        </button>
+      </li>
+
+    </ol>
+  </div>
+  </div>
+
+  <!-- Stage details. Without JavaScript all of them show, one after another. -->
+  <div class="tl-panels">
+
+    <div class="tl-panel" role="tabpanel" id="tl-panel-1" aria-labelledby="tl-tab-1" tabindex="0">
+      <span class="tl-when">Summer 2025 onwards</span>
+      <h3>Getting started</h3>
+      <span class="tl-badge tl-badge--non-statutory">Non-statutory</span>
+      <p>Gathering evidence, identifying key challenges and opportunities, and beginning work on the SDS.</p>
+    </div>
+
+    <div class="tl-panel" role="tabpanel" id="tl-panel-2" aria-labelledby="tl-tab-2" tabindex="0">
+      <span class="tl-when">Winter 2026</span>
+      <h3>Listening to the region</h3>
+      <span class="tl-badge tl-badge--statutory">Statutory</span>
+      <p>Asking what you want the region to look like in 2060, sharing our emerging vision, priorities and evidence, alongside the Call for Sites and Integrated Impact Assessment.</p>
+      <div class="tl-panel-cols">
+        <div>
+          <h4>How you can get involved</h4>
+          <p>Take part in our first public engagement.</p>
+        </div>
+        <div>
+          <h4>How this meets government requirements</h4>
+          <ul>
+            <li>publish timetable</li>
+            <li>publish commencement notice for starting the SDS</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-panel" role="tabpanel" id="tl-panel-3" aria-labelledby="tl-tab-3" tabindex="0">
+      <span class="tl-when">Autumn 2027</span>
+      <h3>Exploring options for growth</h3>
+      <span class="tl-badge tl-badge--non-statutory">Non-statutory</span>
+      <p>Publishing and testing different ways the West of England could grow and develop.</p>
+      <div class="tl-panel-cols">
+        <div>
+          <h4>How you can get involved</h4>
+          <p>Tell us what you think about the different growth options.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-panel" role="tabpanel" id="tl-panel-4" aria-labelledby="tl-tab-4" tabindex="0">
+      <span class="tl-when">Summer 2028</span>
+      <h3>Drafting the strategy</h3>
+      <span class="tl-badge tl-badge--statutory">Statutory</span>
+      <p>Publishing the draft SDS setting out our preferred approach.</p>
+      <div class="tl-panel-cols">
+        <div>
+          <h4>How you can get involved</h4>
+          <p>Have your say on the draft SDS.</p>
+        </div>
+        <div>
+          <h4>How this meets government requirements</h4>
+          <ul>
+            <li>publish draft SDS for consultation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-panel" role="tabpanel" id="tl-panel-5" aria-labelledby="tl-tab-5" tabindex="0">
+      <span class="tl-when">Winter 2028</span>
+      <h3>Independent examination</h3>
+      <span class="tl-badge tl-badge--statutory">Statutory</span>
+      <p>Submitting the SDS to the Planning Inspectorate for examination.</p>
+      <div class="tl-panel-cols">
+        <div>
+          <h4>How you can get involved</h4>
+          <p>You may be able to participate in the Examination in Public.</p>
+        </div>
+        <div>
+          <h4>How this meets government requirements</h4>
+          <ul>
+            <li>submit SDS to Secretary of State (following consultation)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-panel" role="tabpanel" id="tl-panel-6" aria-labelledby="tl-tab-6" tabindex="0">
+      <span class="tl-when">Summer 2029</span>
+      <h3>Finalising the SDS</h3>
+      <span class="tl-badge tl-badge--statutory">Statutory</span>
+      <p>Considering the Inspector's recommendations and moving towards adoption.</p>
+      <div class="tl-panel-cols">
+        <div>
+          <h4>How this meets government requirements</h4>
+          <ul>
+            <li>submit SDS to Secretary of State (following Examination in Public)</li>
+            <li>vote on whether to adopt SDS</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-panel" role="tabpanel" id="tl-panel-7" aria-labelledby="tl-tab-7" tabindex="0">
+      <span class="tl-when">From summer 2029</span>
+      <h3>Delivery and review</h3>
+      <span class="tl-badge tl-badge--none">Ongoing</span>
+      <p>Using the SDS to guide future growth and infrastructure planning across the West of England and keeping it under review.</p>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  (function () {
+    var tl = document.querySelector(".tl");
+    var scroller = document.querySelector(".tl-scroll");
+    var track = document.querySelector(".tl-track");
+    var panelsBox = document.querySelector(".tl-panels");
+    var tabs = Array.prototype.slice.call(document.querySelectorAll(".tl-card[role=tab]"));
+    var panels = Array.prototype.slice.call(document.querySelectorAll(".tl-panel"));
+    var keyBtns = Array.prototype.slice.call(document.querySelectorAll(".tl-key-btn"));
+    var GAP = 8;
+    var EDGE = 4;
+
+    document.documentElement.classList.add("js");
+
+    // Tabs: one stage's details at a time
+    function select(tab, focus) {
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute("aria-selected", on ? "true" : "false");
+        t.tabIndex = on ? 0 : -1;
+        document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+      });
+      if (focus) {
+        tab.focus();
+        tab.scrollIntoView({ block: "nearest", inline: "nearest" });
+      }
+    }
+
+    tabs.forEach(function (tab, i) {
+      tab.addEventListener("click", function () { select(tab, false); });
+      tab.addEventListener("keydown", function (e) {
+        var next = null;
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") next = tabs[(i + 1) % tabs.length];
+        if (e.key === "ArrowLeft" || e.key === "ArrowUp") next = tabs[(i - 1 + tabs.length) % tabs.length];
+        if (e.key === "Home") next = tabs[0];
+        if (e.key === "End") next = tabs[tabs.length - 1];
+        if (next) { e.preventDefault(); select(next, true); }
+      });
+    });
+
+    // Key: highlights the matching stages and opens the first of them
+    keyBtns.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var type = btn.getAttribute("data-type");
+        var turnOn = btn.getAttribute("aria-pressed") !== "true";
+        keyBtns.forEach(function (b) {
+          b.setAttribute("aria-pressed", b === btn && turnOn ? "true" : "false");
+          b.querySelector(".tl-key-action").textContent = b === btn && turnOn ? "Show all stages" : "Show these stages";
+        });
+        tl.classList.toggle("is-filtered", turnOn);
+        var first = null;
+        document.querySelectorAll(".tl-item").forEach(function (item) {
+          var match = item.getAttribute("data-type") === type;
+          item.classList.toggle("is-match", turnOn && match);
+          if (turnOn && match && !first) first = item.querySelector(".tl-card");
+        });
+        if (first) {
+          select(first, false);
+          first.scrollIntoView({ block: "nearest", inline: "nearest" });
+        }
+      });
+    });
+
+    // Layout
+    function clampCards() {
+      var trackWidth = track.offsetWidth;
+      track.querySelectorAll(".tl-item").forEach(function (item) {
+        var card = item.querySelector(".tl-card");
+        var x = item.offsetLeft;
+        var half = card.offsetWidth / 2;
+        var shift = 0;
+        if (x - half < -EDGE) shift = half - x - EDGE;
+        if (x + half > trackWidth + EDGE) shift = trackWidth + EDGE - x - half;
+        card.style.setProperty("--shift", shift + "px");
+      });
+    }
+
+    function tallest(side) {
+      var max = 0;
+      track.querySelectorAll(".is-" + side + " .tl-card").forEach(function (card) {
+        var offset = parseFloat(getComputedStyle(card)[side === "above" ? "bottom" : "top"]) || 0;
+        max = Math.max(max, card.offsetHeight + offset);
+      });
+      return max;
+    }
+
+    // Reserve room for the tallest stage's details, so switching stages never changes the height
+    function reservePanelHeight() {
+      panelsBox.style.minHeight = "";
+      var current = panels.filter(function (p) { return !p.hidden; });
+      var max = 0;
+      panels.forEach(function (p) {
+        panels.forEach(function (q) { q.hidden = q !== p; });
+        max = Math.max(max, panelsBox.offsetHeight);
+      });
+      panels.forEach(function (p) { p.hidden = current.indexOf(p) === -1; });
+      panelsBox.style.minHeight = max + "px";
+    }
+
+    function fit() {
+      clampCards();
+      track.style.setProperty("--above", (tallest("above") + GAP) + "px");
+      track.style.setProperty("--below", (tallest("below") + GAP) + "px");
+      tl.classList.toggle("is-scrollable", scroller.scrollWidth > scroller.clientWidth + 1);
+      reservePanelHeight();
+    }
+
+    select(tabs[0], false);
+    fit();
+    window.addEventListener("load", fit);
+    window.addEventListener("resize", fit);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  })();
+
+  // Only needed for the iframe embed: tells the parent page how tall the timeline is.
+  (function () {
+    if (window.parent === window) return;
+    var tl = document.querySelector(".tl");
+    function sendHeight() {
+      window.parent.postMessage(
+        { type: "mca-timeline-height", height: Math.ceil(tl.getBoundingClientRect().height) },
+        "*"
+      );
+    }
+    window.addEventListener("load", sendHeight);
+    if ("ResizeObserver" in window) {
+      new ResizeObserver(sendHeight).observe(tl);
+    } else {
+      window.addEventListener("resize", sendHeight);
+    }
+  })();
+</script>
+</body>
+</html>
