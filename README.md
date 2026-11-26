@@ -8,13 +8,14 @@ Repo: https://github.com/westofengland-ca/weca_web_timelines
 
 Base URL: https://westofengland-ca.github.io/weca_web_timelines/
 
-Each timeline is published at the base URL followed by its file name, for example https://westofengland-ca.github.io/weca_web_timelines/index-landscape.html
+Each timeline is published at the base URL followed by its file name, for example https://westofengland-ca.github.io/weca_web_timelines/SDS-timeline.html
 
 ## Timelines in this repo
 
 | File | Content | Used on |
 | --- | --- | --- |
-| `index-landscape.html` | Spatial Development Strategy (SDS) stages, 2025 to 2029 | westofengland-ca.gov.uk, Vision 2060 page |
+| `SDS-timeline.html` | Spatial Development Strategy (SDS) stages, 2025 to 2029 | westofengland-ca.gov.uk, Vision 2060 page |
+| `sds-timeline-v2.html` | SDS stages with a details panel for each stage, labelled statutory or non-statutory. Evenly spaced, not to scale | In review |
 | `index.html` | Placeholder content, 2026 to 2060. Switches to a vertical list below 720px | Not used |
 
 Add a row when you publish a new timeline, so anyone changing a file knows which page it affects.
@@ -23,7 +24,7 @@ Each file is self-contained: HTML, CSS and JavaScript are in one file. There is 
 
 ## Making a new timeline
 
-1. Copy `index-landscape.html` and give it a short name with no spaces, for example `bus-franchising.html`
+1. Copy `SDS-timeline.html` and give it a short name with no spaces, for example `bus-franchising.html`
 2. Update the `<title>` and the hidden `<h2>` with the timeline's name and date range
 3. Set the date range and year markers (see [Setting the date range](#setting-the-date-range))
 4. Replace the stages (see [Adding stages](#adding-stages))
@@ -31,7 +32,7 @@ Each file is self-contained: HTML, CSS and JavaScript are in one file. There is 
 6. Measure the height and embed it (see [Embedding in WordPress](#embedding-in-wordpress))
 7. Add it to the table above
 
-Use `index-landscape.html` as the starting point. It stays horizontal and scrolls sideways on narrow screens. Use `index.html` instead if you want the timeline to turn into a vertical list on phones, which is better for accessibility (see [Accessibility](#accessibility)).
+Use `SDS-timeline.html` as the starting point. It stays horizontal and scrolls sideways on narrow screens. Use `index.html` instead if you want the timeline to turn into a vertical list on phones, which is better for accessibility (see [Accessibility](#accessibility)).
 
 ## Setting the date range
 
@@ -85,6 +86,20 @@ Card content:
 - `tl-sub` - optional supporting text, around 15 words at most
 - `tl-list` - optional bulleted list (a `<ul class="tl-list">`), lowercase with no full stops
 
+Expandable detail, for lists or longer text that would make the card too tall:
+
+```html
+<details class="tl-more">
+  <summary>What this includes</summary>
+  <ul class="tl-list">
+    <li>first item</li>
+    <li>second item</li>
+  </ul>
+</details>
+```
+
+The panel opens downwards over the space below the card, so opening it doesn't change the height of the timeline or the iframe. Put a card with expandable detail above the line, with no card close to it below the line. The script reserves enough space below the line for the open panel. Escape closes it.
+
 Card with an image:
 
 ```html
@@ -115,7 +130,7 @@ Paste this into a Custom HTML block, changing the file name, `title` and height:
 
 ```html
 <iframe class="mca-timeline"
-  src="https://westofengland-ca.github.io/weca_web_timelines/index-landscape.html"
+  src="https://westofengland-ca.github.io/weca_web_timelines/SDS-timeline.html"
   title="Spatial Development Strategy timeline"
   loading="lazy"
   style="display:block;width:100%;border:0;height:610px"></iframe>
